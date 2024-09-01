@@ -1,0 +1,65 @@
+---
+apiVersion : apps/v1
+kind       : Deployment
+metadata:
+  name   : deployment-pyserver
+  labels :
+    app   : deployment-pyserver
+    owner : skramar
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      project: skramar # label по поктором service найдёт под для запуска трафика
+  template:
+    metadata:
+      labels:
+        project: skramar
+    spec:
+      containers:
+        - name   : skramar-container-test
+          image  : skramar/private:pyserver
+          #      command: ["python3", "/server.py" ] # Аналогична ENTRYPOINT в докерфайле(запуск приложения без обёртки bash)
+          #      args   : ["ls", "/tmp"] # Аналогична CMD в докерфайле
+          ports  :
+            - name: pyserver-port
+              containerPort: 80
+          livenessProbe: # в случае ошибки ребутает под
+            httpGet:
+              path: / # Обычно /health, Путь для доступа к HTTP серверу
+              port: pyserver-port
+              scheme: HTTP # Схема для соединения к хосту (HTTP or HTTPS). По умолчанию HTTP.
+            failureThreshold : 3 # Когда Pod стартует и проба даёт ошибку, Kubernetes будет пытаться столько провторять пробу
+            # перед тем, как сдаться. Сдаться в этом случае для liveness пробы означает перезапуск контейнера. 
+            # В случае readiness пробы Pod будет помечен Unready. По умолчанию 3. Минимальное значение 1.
+            periodSeconds    : 10 # Длительность времени (в секундах) между двумя последовательными проведениями проб. По умолчанию 10 секунд. Минимальное значение 1.
+          readinessProbe: # в случае ошибки делает под не доступным для service()
+            tcpSocket:
+              port: 80
+            initialDelaySeconds: 5 # Количество секунд от старта контейнера до начала liveness или readiness проб. По умолчанию 0 секунд.
+          startupProbe: # проба необходима для старта приложения(до успешной этой пробы, другие не запускаются)
+            exec:
+              command:
+                - ls
+                - /tmp
+            failureThreshold   : 30 # failureThreshold * periodSeconds должно быть достаточным,
+            periodSeconds      : 10 # чтобы покрыть наихудшее время старта.
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pyserver-deployment-service
+  labels:
+    owner : skramar
+    app   : pyserver-deployment-service
+spec:
+  selector:
+    project: skramar # label по покторому service будет искат под для запуска трафика
+  ports:
+    - name       : pyserver-deployment-lisener
+      protocol   : TCP
+      port       : 80
+      targetPort : 80
+  type: LoadBalancer
