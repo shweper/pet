@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+sudo apt-get update
+sudo apt-get install -y curl openssh-server ca-certificates tzdata perl
+
+sudo apt-get install -y postfix
+
+
+curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash
+sudo apt-get install gitlab-ce
+
+# sudo gitlab-ctl reconfigure
+
+sudo cat /etc/gitlab/initial_root_password
