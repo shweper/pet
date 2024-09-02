@@ -12,6 +12,7 @@ build_container:
     - export CONTPYID=$(docker ps | grep pyserver | cut -f1 -d' ')
     - docker stop $CONTPYID
     - docker rm $CONTPYID
+    - unset CONTPYID
     - docker rmi pyserver
 
 
