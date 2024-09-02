@@ -1,32 +1,31 @@
 stages:
   - build
-  - test
+#  - test
 #  - deploy
 
-#default:
-#  image: python:3.12.5-alpine3.19
-
-build_a:
+build_container:
   stage: build
   script:
     - echo "This job builds container."
-    - docker stop pyserver
-    - docker rm pyserver
-    - docker rmi pyserver
     - docker build -t pyserver:latest .
-    - docker run -d -p 80:8181 pyserver
+    - docker run -d -p 1080:1080 pyserver
+    - export CONTPYID=$(docker ps | grep pyserver | cut -f1 -d' ')
+    - docker stop $CONTPYID
+    - docker rm $CONTPYID
+    - docker rmi pyserver
+
 
 #build_b:
 #  stage: build
 #  script:
 #    - echo "This job builds something else."
 
-test_a:
-  stage: test
-  script:
-    - echo "This job tests something. It will only run when all jobs in the"
-    - echo "build stage are complete."
-    - curl 'http://localhost:8181/'
+#test_a:
+#  stage: test
+#  script:
+#    - echo "This job tests something. It will only run when all jobs in the"
+#    - echo "build stage are complete."
+#    - curl 'http://localhost:8181/'
 
 #test_b:
 #  stage: test

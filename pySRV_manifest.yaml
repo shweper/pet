@@ -25,7 +25,7 @@ spec:
           #      args   : ["ls", "/tmp"] # Аналогична CMD в докерфайле
           ports  :
             - name: pyserver-port
-              containerPort: 80
+              containerPort: 1080
           livenessProbe: # в случае ошибки ребутает под
             httpGet:
               path: / # Обычно /health, Путь для доступа к HTTP серверу
@@ -37,7 +37,7 @@ spec:
             periodSeconds    : 10 # Длительность времени (в секундах) между двумя последовательными проведениями проб. По умолчанию 10 секунд. Минимальное значение 1.
           readinessProbe: # в случае ошибки делает под не доступным для service()
             tcpSocket:
-              port: 80
+              port: 1080
             initialDelaySeconds: 5 # Количество секунд от старта контейнера до начала liveness или readiness проб. По умолчанию 0 секунд.
           startupProbe: # проба необходима для старта приложения(до успешной этой пробы, другие не запускаются)
             exec:
@@ -61,5 +61,5 @@ spec:
     - name       : pyserver-deployment-lisener
       protocol   : TCP
       port       : 80
-      targetPort : 80
+      targetPort : 1080
   type: LoadBalancer

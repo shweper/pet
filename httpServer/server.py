@@ -9,7 +9,7 @@ class SimpleHTTPRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(b"Hello from hostName: " + socket.gethostname().encode())
 
-def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=80):
+def run(server_class=HTTPServer, handler_class=SimpleHTTPRequestHandler, port=1080):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
     print(f"Starting httpd server on port {port}")
