@@ -9,7 +9,7 @@ build_container:
     - echo "This job builds container."
     - docker build -t pyserver:latest .
     - docker run -d -p 1080:1080 pyserver
-    - export CONTPY$docker ps | grep pyserver | cut -f1 -d' ')
+    - export CONTPY=$(docker ps | grep pyserver | cut -f1 -d' ')
     - docker stop $CONTPYID
     - docker rm $CONTPYID
     - unset CONTPYID
