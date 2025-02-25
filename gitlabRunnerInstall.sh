@@ -12,6 +12,7 @@ if [ -n "$1" ]; then
     --description "Runner" \
     --docker-image "docker:24.0.5" \
     --docker-volumes /var/run/docker.sock:/var/run/docker.sock
+  touch ~/gitlab-runner_exist
 else
  echo "Not found parameters: registration-token"
 fi

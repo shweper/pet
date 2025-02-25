@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 sudo apt-get update
 sudo apt-get install -y curl openssh-server ca-certificates tzdata perl
@@ -14,5 +14,7 @@ echo 'Use your ip address: '
 hostname  -I | cut -f1 -d' '
 echo 'configuration url in /etc/gitlab/gitlab.rb file.'
 # sudo gitlab-ctl reconfigure
+echo 'and use command "sudo gitlab-ctl reconfigure"'
 
-sudo cat /etc/gitlab/initial_root_password
+echo 'after command completed, you can find root passwd in /etc/gitlab/initial_root_password'
+# sudo cat /etc/gitlab/initial_root_password

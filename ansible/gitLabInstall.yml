@@ -1,0 +1,78 @@
+---
+- name: deploy gitLab
+  hosts: git
+  become: true
+  tasks:
+    - name: Install dependencies app
+      become: true
+      ansible.builtin.apt:
+        name:
+          - curl
+          - openssh-server
+          - ca-certificates
+          - tzdata
+          - perl
+          - postfix
+          - dpkg
+        state: present
+
+    - name: get gitLab
+      ansible.builtin.shell:
+        cmd: curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ce/script.deb.sh | sudo bash
+        chdir: ~/
+
+    - name: Add Docker GPG apt Key
+      ansible.builtin.apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add repository into sources list
+      ansible.builtin.apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_lsb.codename }} stable
+        state: present
+        filename: docker
+
+    - name: killall apt apt-get
+      ansible.builtin.shell:
+        cmd: sudo killall apt apt-get
+      ignore_errors: True
+
+    - name: Install Docker
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        state: present
+
+    - name: Install gitLab
+      ansible.builtin.apt:
+        name: gitlab-ce
+        state: latest
+
+    - name: configure gitLab
+      ansible.builtin.shell:
+        cmd:
+        - sed -e 's/gitlab.example.com/{{ansible_host}}/' /etc/gitlab/gitlab.rb
+
+    - name: configure gitLab
+      ansible.builtin.shell:
+        cmd:
+          - sed -e 's/# gitlab_rails[\\'initial_shared_runners_registration_token\\']/gitlab_rails[\\'initial_shared_runners_registration_token\\']/' /etc/gitlab/gitlab.rb
+
+    - name: reconfigure gitLab
+      ansible.builtin.shell:
+        cmd: sudo gitlab-ctl reconfigure
+
+    - name: find pass root ditLab
+      ansible.builtin.shell:
+        cmd: sudo cat /etc/gitlab/initial_root_password
+      register: initial_root_password
+
+    - name: Run a script only if file 'gitlab-runner_exist' does not exist on the remote node
+      ansible.builtin.script: ~/gitlabRunnerInstall.sh --some-argument token
+      args:
+        creates: ~/gitlab-runner_exist
+
+    - name: show pass root ditLab
+      debug: var=initial_root_password.stdout_lines

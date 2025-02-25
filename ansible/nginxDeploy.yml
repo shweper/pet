@@ -1,0 +1,19 @@
+---
+- name: deploy nginx
+  hosts: nginx
+  become: true
+  tasks:
+  - name: Install nginx
+    become: true
+    ansible.builtin.apt:
+      name: nginx
+      state: present
+  - name: Update nginx
+    ansible.builtin.apt:
+      name: nginx
+      state: latest
+#  - name: Delete nginx
+#    ansible.builtin.apt:
+#      name: nginx
+#      state: absent
+

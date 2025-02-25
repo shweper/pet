@@ -46,6 +46,9 @@ spec:
                 - /tmp
             failureThreshold   : 30 # failureThreshold * periodSeconds должно быть достаточным,
             periodSeconds      : 10 # чтобы покрыть наихудшее время старта.
+          imagePullPolicy: IfNotPresent
+#      imagePullSecrets:
+#      - name: mycred
 ---
 apiVersion: v1
 kind: Service
@@ -56,7 +59,7 @@ metadata:
     app   : pyserver-deployment-service
 spec:
   selector:
-    project: skramar # label по покторому service будет искат под для запуска трафика
+    project: skramar # label по покторому service будет искать под для запуска трафика
   ports:
     - name       : pyserver-deployment-lisener
       protocol   : TCP

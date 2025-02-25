@@ -1,0 +1,15 @@
+[git]
+gitLab ansible_host=172.18.62.10 ansible_user=stanislav.kramar ansible_ssh_private_key_file=/home/stanislav.kramar/.ssh/gitLab become_user=true
+
+[runner_git]
+gitLab ansible_host=172.18.61.140 ansible_user=stanislav.kramar ansible_ssh_private_key_file=/home/stanislav.kramar/.ssh/gitLab
+
+[K8s]
+k3s ansible_host=172.18.61.17 ansible_user=stanislav.kramar ansible_ssh_private_key_file=/home/stanislav.kramar/.ssh/k3s
+
+[nginx]
+nginxHost ansible_host= ansible_user=stanislav.kramar ansible_ssh_private_key_file=/home/stanislav.kramar/.ssh/nginx
+
+[gitLab:children]
+git
+runner_git
